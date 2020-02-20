@@ -42,9 +42,9 @@ public class EscalonadorMaisCurtoPrimeiro extends Escalonador {
 	public void tick() {
 
 		tick++;
-		
+
 		rodarPrimeiroProcessoMCP();
-		
+
 		rodarNovoProcesso();
 
 	}
@@ -75,6 +75,54 @@ public class EscalonadorMaisCurtoPrimeiro extends Escalonador {
 		}
 	}
 
-	
+	public void adicionarProcessoTempoFixo(String nomeProcesso, int duracao) {
+		if (fila.contains(nomeProcesso) || nomeProcesso == null) {
+			throw new EscalonadorException();
+		}
+		if (duracao < 1) {
+			throw new EscalonadorException();
+		}
+		adicionarProcessoMCP(nomeProcesso, duracao);
+
+	}
+
+	private void adicionarProcessoMCP(String nomeProcesso, int duracao) {
+		int maisCurto = Integer.MAX_VALUE;
+		if (fila.size() == 0) {
+			fila.add(nomeProcesso);
+			duracoes.add(duracao);
+		} else {
+			int menorPosicao = guardarPosicaoMenor(nomeProcesso, duracao, maisCurto);
+
+			ordenarFilaProcessos(menorPosicao);
+		}
+	}
+
+	private void ordenarFilaProcessos(int menorPosicao) {
+		if (menorPosicao > 0) {
+			String filaTemp = fila.remove(menorPosicao);
+			Integer duracaoTemp = duracoes.remove(menorPosicao);
+
+			fila.add(0, filaTemp);
+			duracoes.add(0, duracaoTemp);
+		}
+	}
+
+	private int guardarPosicaoMenor(String nomeProcesso, int duracao, int maisCurto) {
+		fila.add(nomeProcesso);
+		duracoes.add(duracao);
+		int menorPosicao = 0;
+		for (int i = 0; i < duracoes.size(); i++) {
+			if (duracoes.get(i) < maisCurto) {
+				maisCurto = duracoes.get(i);
+				menorPosicao = i;
+			}
+		}
+		return menorPosicao;
+	}
+
+	public void adicionarProcesso(String nomeProcesso, int prioridade) {
+		throw new EscalonadorException();
+	}
 
 }
